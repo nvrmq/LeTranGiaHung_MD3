@@ -18,7 +18,9 @@ create table phieu_nhap (
 
 create table don_dat_hang (
     ma_dat_hang int primary key,
-    ngay date
+    ngay date,
+    ma_nccap int,
+    foreign key (m_nccap) references nha_ccap(ma)
 );
 
 create table nha_ccap (
