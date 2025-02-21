@@ -230,10 +230,40 @@ left join dich_vu_di_kem dvdk on dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
 left join dich_vu dv on dv.ma_dich_vu = hd.ma_dich_vu
 group by
 	kh.ma_khach_hang, 
-    kh.ho_ten, 
-    lk.ten_loai_khach, 
     hd.ma_hop_dong, 
     dv.ten_dich_vu, 
     hd.ngay_lam_hop_dong, 
     hd.ngay_ket_thuc
 order by kh.ma_khach_hang, hd.ma_hop_dong;
+
+-- cau 6
+select dv.ma_dich_vu, dv.ten_dich_vu, dv.dien_tich, dv.chi_phi_thue, ldv.ten_loai_dich_vu from dich_vu dv
+join loai_dich_vu ldv on ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu 
+where dv.ma_loai_dich_vu not in(
+	select distinct hd.ma_dich_vu from hop_dong hd where hd.ngay_lam_hop_dong between '2021-1-1' and '2021-3-31'
+);
+
+-- cau 7
+select dv.ma_dich_vu, dv.ten_dich_vu, dv.dien_tich, dv.so_nguoi_toi_da, dv.chi_phi_thue, ldv.ten_loai_dich_vu from dich_vu dv
+join loai_dich_vu ldv on ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
+where dv.ma_dich_vu in (
+	select distinct hd.ma_dich_vu from hop_dong hd
+    where year(ngay_lam_hop_dong) = 2020 
+)
+and dv.ma_dich_vu not in (
+	select distinct hd.ma_dich_vu from hop_dong hd
+    where year(ngay_lam_hop_dong) = 2021
+);
+-- cau 8
+select distinct ho_ten from khach_hang;
+
+select ho_ten from khach_hang group by ho_ten;
+
+select ho_ten from khach_hang union select ho_ten from khach_hang;
+
+-- cau 9
+select month(hd.ngay_lam_hop_dong) as thang, count(distinct hd.ma_khach_hang) as so_luong_khach_hang
+from hop_dong hd
+where hd.ngay_lam_hop_dong between '2021-01-01' and '2021-12-31'
+group by month(hd.ngay_lam_hop_dong)
+order by thang;
