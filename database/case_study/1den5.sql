@@ -262,8 +262,12 @@ select ho_ten from khach_hang group by ho_ten;
 select ho_ten from khach_hang union select ho_ten from khach_hang;
 
 -- cau 9
-select month(hd.ngay_lam_hop_dong) as thang, count(distinct hd.ma_khach_hang) as so_luong_khach_hang
-from hop_dong hd
-where hd.ngay_lam_hop_dong between '2021-01-01' and '2021-12-31'
+select month(hd.ngay_lam_hop_dong) as thang, count(distinct hd.ma_khach_hang) as so_luong_khach_hang from hop_dong hd
+where year(ngay_lam_hop_dong) = 2021
 group by month(hd.ngay_lam_hop_dong)
 order by thang;
+
+-- cau 10
+select hd.ma_hop_dong, hd.ngay_lam_hop_dong, hd.ngay_ket_thuc, hd.tien_dat_coc, sum(hdct.so_luong) from hop_dong hd
+left join hop_dong_chi_tiet hdct on hdct.ma_hop_dong = hd.ma_hop_dong
+group by hd.ma_hop_dong;
