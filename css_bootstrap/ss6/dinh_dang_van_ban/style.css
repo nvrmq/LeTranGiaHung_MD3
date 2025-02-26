@@ -1,0 +1,13 @@
+p {
+    max-width: 800px;
+    text-align: justify;
+}
+.cyan-text {
+    color: dodgerblue;
+}
+.blue-text{
+    color: blue;
+}
+sup{
+    color: blue;
+}
