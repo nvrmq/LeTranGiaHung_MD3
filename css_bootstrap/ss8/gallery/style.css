@@ -10,6 +10,11 @@
     margin-bottom: 1rem;
     justify-content: center;
 }
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .gallery .item{
     width: 270px;
     height: 100%;
