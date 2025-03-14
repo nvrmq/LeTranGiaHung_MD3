@@ -14,7 +14,6 @@
 <body>
 <h3>Searche product</h3>
 <form action="/products" method="get">
-  <input type="hidden" name="action" value="search">
   <input type="text" name="keyword" placeholder="Enter product name">
   <input type="hidden" name="action" value="search">
   <button type="submit">Search</button>
