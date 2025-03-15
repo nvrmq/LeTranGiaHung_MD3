@@ -12,7 +12,7 @@
     <title>Product List</title>
 </head>
 <body>
-<h3>Searche product</h3>
+<h3>Search product</h3>
 <form action="/products" method="get">
   <input type="text" name="keyword" placeholder="Enter product name">
   <input type="hidden" name="action" value="search">
@@ -38,7 +38,7 @@
       <td>${product.manufacturer}</td>
       <td>
         <a href="/products?action=edit&id=${product.getId()}">Edit</a>
-        <a href="/products?action=delete&id=${product.getId()}" onclick="confirm('Do you want to delete${product.getName()}')">Delete</a>
+        <a href="/products?action=delete&id=${product.getId()}" onclick="confirm('Do you want to delete: ${product.getName()}')">Delete</a>
       </td>
     </tr>
   </c:forEach>

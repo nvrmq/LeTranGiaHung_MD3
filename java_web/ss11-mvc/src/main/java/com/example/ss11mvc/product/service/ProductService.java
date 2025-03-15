@@ -3,81 +3,109 @@ package com.example.ss11mvc.product.service;
 
 
 import com.example.ss11mvc.product.model.Product;
+import com.example.ss11mvc.product.util.BaseRepository;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductService {
+    private final String SELECT_ALL ="select * from product";
+    private final String DELETE_BY_ID ="delete from product where pid =?";
+    private final String INSERT_INTO ="insert into product(pName,pPrice,pDesc,pManufac) values (?,?,?,?)";
+    private final String UPDATE_BY_ID = "update product set pName=?,pPrice=?,pDesc=?,pManufac=? where pid=?";
+    private final String SELECT_BY_ID ="select * from product where pid=?";
+    private final String SELECT_BY_NAME ="select * from product where pName=?";
     public static List<Product> products = new ArrayList<>();
-    static {
-        products.add(new Product(1, "SwiftStream 200", 950.00, "Everyday Use", "NovaTech"));
-        products.add(new Product(2, "GameMaster X", 1800.00, "Gaming", "Apex Systems"));
-        products.add(new Product(3, "WorkPro 50", 1200.00, "Business", "GlobalTech"));
-        products.add(new Product(4, "EduBook 100", 700.00, "Student", "LearnWell"));
-        products.add(new Product(5, "MediaMax Pro", 1550.00, "Creative", "Visionary"));
-        products.add(new Product(6, "TravelLite 30", 850.00, "Travel", "RoamFree"));
-        products.add(new Product(7, "PowerHouse 90", 2000.00, "High Performance", "Quantum Leap"));
-        products.add(new Product(8, "DailyDriver 25", 650.00, "Basic", "Simple Solutions"));
-        products.add(new Product(9, "CodeCrafter 11", 1400.00, "Programming", "Logic Labs"));
-        products.add(new Product(10, "Artisan 7", 1700.00, "Design", "Creative Canvas"));
-        products.add(new Product(11, "NetSurfer 15", 550.00, "Web Browsing", "Cloud Connect"));
-        products.add(new Product(12, "UltraView 88", 1900.00, "Video Editing", "Pixel Perfect"));
-        products.add(new Product(13, "OfficeMate 42", 1100.00, "Office", "Productive Pro"));
-        products.add(new Product(14, "Student Plus", 750.00, "Student", "Academic Ace"));
-    }
 
-    public List<Product> getProducts() {
-        for (int i = 0; i < generateId()-1; i++) {
-            products.get(i).setId(i+1);
+    public List<Product> getProducts() throws SQLException {
+        List<Product> products = new ArrayList<>();
+        Connection connection = BaseRepository.getConnectDB();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("pid");
+            String name = resultSet.getString("pName");
+            double price = resultSet.getDouble("pPrice");
+            String description = resultSet.getString("pDesc");
+            String manufacturer = resultSet.getString("pManufac");
+            Product product = new Product(id, name, price, description, manufacturer);
+            products.add(product);
         }
         return products;
     }
-    public void addProduct(Product product) {
-        products.add(product);
+    public void addProduct(Product product) throws SQLException {
+        Connection connection = BaseRepository.getConnectDB();
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTO);
+        preparedStatement.setString(1, product.getName());
+        preparedStatement.setDouble(2, product.getPrice());
+        preparedStatement.setString(3, product.getDescription());
+        preparedStatement.setString(4, product.getManufacturer());
+        preparedStatement.executeUpdate();
     }
-    public void updateProduct(int id, Product product) {
-        for(Product p : products) {
-            if(p.getId() == id) {
-                p.setName(product.getName());
-                p.setPrice(product.getPrice());
-                p.setDescription(product.getDescription());
-                p.setManufacturer(product.getManufacturer());
-                return;
-            }
-        }
+    public void updateProduct(int id, Product product) throws SQLException {
+        Connection connection = BaseRepository.getConnectDB();
+        PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BY_ID);
+        preparedStatement.setString(1, product.getName());
+        preparedStatement.setDouble(2, product.getPrice());
+        preparedStatement.setString(3, product.getDescription());
+        preparedStatement.setString(4, product.getManufacturer());
+        preparedStatement.setInt(5, id);
+        preparedStatement.executeUpdate();
     }
-    public void deleteProduct(int id) {
-        for (int i = 0; i < products.size(); i++) {
-            if (products.get(i).getId() == id) {
-                products.remove(i);
-                break;
-            }
-        }
+    public void deleteProduct(int id) throws SQLException {
+        Connection connection = BaseRepository.getConnectDB();
+        PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BY_ID);
+        preparedStatement.setInt(1, id);
+        preparedStatement.executeUpdate();
     }
-    public Product getProductById(int id) {
-        for(Product p : products) {
-            if(p.getId() == id) {
-                return p;
-            }
+    public Product getProductById(int id) throws SQLException {
+        Connection connection = BaseRepository.getConnectDB();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID);
+        preparedStatement.setInt(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()){
+            return new Product(
+                    resultSet.getInt("pid"),
+                    resultSet.getString("pName"),
+                    resultSet.getDouble("pPrice"),
+                    resultSet.getString("pDesc"),
+                    resultSet.getString("pManufac")
+            );
         }
         return null;
     }
-    public List<Product> getProductByName(String name) {
+    public List<Product> getProductByName(String name) throws SQLException {
         List<Product> result = new ArrayList<>();
-        for(Product p : products) {
-            if(p.getName().toLowerCase().contains(name.toLowerCase())) {
-                result.add(p);
-            }
+        Connection connection = BaseRepository.getConnectDB();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_NAME);
+        preparedStatement.setString(1, name);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()){
+            result.add(new Product(
+                    resultSet.getInt("pid"),
+                    resultSet.getString("pName"),
+                    resultSet.getDouble("pPrice"),
+                    resultSet.getString("pDesc"),
+                    resultSet.getString("pManufac")
+            ));
         }
         return result;
     }
     public int generateId() {
-        int maxId = 0;
-        for (Product p : products) {
-            if (p.getId() > maxId) {
-                maxId = p.getId();
+        String query = "select max(id) as max_id from products";
+        try (Connection connection = BaseRepository.getConnectDB();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            if (resultSet.next()) {
+                return resultSet.getInt("max_id") + 1;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return maxId + 1;
-    }
-}
+        return 1;
+    }}
