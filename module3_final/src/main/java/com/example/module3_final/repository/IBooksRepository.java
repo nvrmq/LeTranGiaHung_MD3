@@ -11,6 +11,6 @@ public interface IBooksRepository {
     List<Book> findAll();
     Book findById(int id);
     List<Student> finAllStudents();
-    List<Ticket> finAllTickets();
     void addTicket(TicketCard ticket);
+    List<Ticket> findAllTickets();
 }

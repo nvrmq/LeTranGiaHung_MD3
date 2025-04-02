@@ -1,23 +1,24 @@
 package com.example.module3_final.model;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class TicketCard {
     private int ticketId;
     private int bookId;
     private int studentId;
     private String status;
-    private String lentDate;
-    private String returnDate;
+    private Date lentDate;
+    private Date returnDate;
 
-    public TicketCard(int bookId, int studentId, String status, String lentDate, String returnDate) {
+    public TicketCard(int bookId, int studentId, String status, Date lentDate, Date returnDate) {
         this.bookId = bookId;
         this.studentId = studentId;
         this.status = status;
         this.lentDate = lentDate;
         this.returnDate = returnDate;
     }
-    public TicketCard(int ticketId, int bookId, int studentId, String status, String lentDate, String returnDate) {
+    public TicketCard(int ticketId, int bookId, int studentId, String status, Date lentDate, Date returnDate) {
         this.ticketId = ticketId;
         this.bookId = bookId;
         this.studentId = studentId;
@@ -58,19 +59,19 @@ public class TicketCard {
         this.status = status;
     }
 
-    public String getLentDate() {
+    public Date getLentDate() {
         return lentDate;
     }
 
-    public void setLentDate(String lentDate) {
+    public void setLentDate(Date lentDate) {
         this.lentDate = lentDate;
     }
 
-    public String getReturnDate() {
+    public Date getReturnDate() {
         return returnDate;
     }
 
-    public void setReturnDate(String returnDate) {
+    public void setReturnDate(Date returnDate) {
         this.returnDate = returnDate;
     }
 }

@@ -2,6 +2,7 @@ package com.example.module3_final.service;
 
 import com.example.module3_final.model.Book;
 import com.example.module3_final.model.Student;
+import com.example.module3_final.model.Ticket;
 import com.example.module3_final.model.TicketCard;
 import com.example.module3_final.repository.BooksRepository;
 
@@ -27,5 +28,10 @@ public class BooksService implements IBookService{
     @Override
     public void addTicket(TicketCard ticket) {
         booksRepository.addTicket(ticket);
+    }
+
+    @Override
+    public List<Ticket> findAllTicket() {
+        return booksRepository.findAllTickets();
     }
 }

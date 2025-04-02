@@ -1,3 +1,5 @@
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
@@ -226,12 +228,12 @@
 
             <div class="form-group">
                 <label>Lending Date</label>
-                <p id="lendDate" class="form-control">${localTime}</p>
+                <p id="lendDate" class="form-control" value="<%= new SimpleDateFormat("yyyy/MM/dd").format(new Date()) %>">${localTime}</p>
             </div>
 
             <div class="form-group">
                 <label for="returnDate">Return Date</label>
-                <input type="date" id="returnDate" name="returnDate" class="form-control" required>
+                <input type="text" class="form-control" id="returnDate" name="returnDate" required placeholder="yyyy/MM/dd">
             </div>
 
             <div style="display: flex; gap: 1rem;">

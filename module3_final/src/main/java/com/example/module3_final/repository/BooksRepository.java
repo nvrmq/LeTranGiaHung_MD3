@@ -86,10 +86,42 @@ public class BooksRepository implements IBooksRepository {
         }
         return students;
     }
+    @Override
+    public void addTicket(TicketCard borrowCard) {
+        String sql = "INSERT INTO tickets (book_id, student_id, status, lent_date, returned_date) VALUES(?, ?, ?, ?, ?);";
+        Connection connection = BaseRepository.getConnectDB();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, borrowCard.getBookId());
+            preparedStatement.setInt(2, borrowCard.getStudentId());
+            preparedStatement.setString(3, borrowCard.getStatus());
+            preparedStatement.setDate(4, (java.sql.Date) new Date(borrowCard.getLentDate().getTime()));
+            preparedStatement.setDate(5, (java.sql.Date) new Date(borrowCard.getReturnDate().getTime()));
+            int effectRows = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
-    public List<Ticket> finAllTickets() {
-        String sql = "SELECT t.id AS ticket_id, s.student_name, b.book_name, t.lent_date, t.returned_date, t.status FROM tickets t JOIN students s ON t.student_id = s.id JOIN books b ON t.book_id = b.id;";
+    public List<Ticket> findAllTickets() {
+        String sql = "SELECT\n" +
+                "    tickets.id,\n" +
+                "    books.book_name,\n" +
+                "    books.book_author,\n" +
+                "    students.student_name,\n" +
+                "    students.student_class,\n" +
+                "    tickets.lent_date,\n" +
+                "    tickets.returned_date,\n" +
+                "    tickets.status\n" +
+                "FROM\n" +
+                "    tickets\n" +
+                "JOIN\n" +
+                "    books ON tickets.book_id = books.id\n" +
+                "JOIN\n" +
+                "    students ON tickets.student_id = students.id\n" +
+                "WHERE\n" +
+                "    tickets.status = 'lent';";
         List<Ticket> tickets = new ArrayList<>();
         Connection connection = BaseRepository.getConnectDB();
         try {
@@ -97,50 +129,20 @@ public class BooksRepository implements IBooksRepository {
             statement.execute();
             ResultSet resultSet = statement.getResultSet();
             while (resultSet.next()){
-                int id  = resultSet.getInt("id");
-                String bookName = resultSet.getString("book_name");
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("book_name");
+                String author = resultSet.getString("book_author");
                 String studentName = resultSet.getString("student_name");
+                String studentClass= resultSet.getString("student_class");
                 String status = resultSet.getString("status");
                 String lentDate = resultSet.getString("lent_date");
                 String returnedDate = resultSet.getString("returned_date");
-                Ticket ticket = new Ticket(id, bookName, studentName, status, lentDate, returnedDate);
+                Ticket ticket = new Ticket(id, name, author, studentName, studentClass, status, lentDate, returnedDate);
                 tickets.add(ticket);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return tickets;
-    }
-
-    @Override
-    public void addTicket(TicketCard ticket) {
-        String sql = "INSERT INTO tickets (book_id, student_id, status, lent_date, returned_date) VALUES(?, ?, ?, ?, ?);";
-        Connection connection = BaseRepository.getConnectDB();
-        try {
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, ticket.getBookId());
-            statement.setInt(2, ticket.getStudentId());
-            statement.setString(3, ticket.getStatus());
-
-            // Format lentDate
-            SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
-            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date parsedLentDate = inputFormat.parse(ticket.getLentDate());
-            String formattedLentDate = outputFormat.format(parsedLentDate);
-            statement.setString(4, formattedLentDate);
-
-            // Format returnDate
-            if (ticket.getReturnDate() != null && !ticket.getReturnDate().isEmpty()){
-                Date parsedReturnDate = inputFormat.parse(ticket.getReturnDate());
-                String formattedReturnDate = outputFormat.format(parsedReturnDate);
-                statement.setString(5, formattedReturnDate);
-            } else {
-                statement.setString(5, null);
-            }
-
-            statement.execute();
-        } catch (SQLException | ParseException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

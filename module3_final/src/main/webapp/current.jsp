@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: macbook
@@ -227,7 +228,20 @@
             </tr>
             </thead>
             <tbody id="historyTableBody">
-            <!-- Table content will be populated by JavaScript -->
+            <c:forEach var="item" items="${tickets}">
+                <a>
+                    <tr>
+                        <td><c:out value="${item.getTicketId()}"/></td>
+                        <td><c:out value="${item.getBookName()}"/></td>
+                        <td><c:out value="${item.getAuthor()}"/></td>
+                        <td><c:out value="${item.getStudentName()}"/></td>
+                        <td><c:out value="${item.getStudentClass()}"/></td>
+                        <td><c:out value="${item.getLentDate()}"/></td>
+                        <td><c:out value="${item.getReturnDate()}"/></td>
+                        <td><a href="/book?action=lend&id=${item.getTicketId()}">Return/a></td>
+                    </tr>
+                </a>
+            </c:forEach>
             </tbody>
         </table>
     </div>

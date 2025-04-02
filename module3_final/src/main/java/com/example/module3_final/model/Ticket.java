@@ -5,15 +5,19 @@ import java.time.LocalDateTime;
 public class Ticket {
     private int ticketId;
     private String bookName;
+    private String author;
     private String studentName;
+    private String studentClass;
     private String status;
     private String lentDate;
     private String returnDate;
 
-    public Ticket(int ticketId, String bookName, String studentName, String status, String lentDate, String returnDate) {
+    public Ticket(int ticketId, String bookName, String author, String studentName, String studentClass, String status, String lentDate, String returnDate) {
         this.ticketId = ticketId;
         this.bookName = bookName;
+        this.author = author;
         this.studentName = studentName;
+        this.studentClass = studentClass;
         this.status = status;
         this.lentDate = lentDate;
         this.returnDate = returnDate;
@@ -65,5 +69,21 @@ public class Ticket {
 
     public void setReturnDate(String returnDate) {
         this.returnDate = returnDate;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getStudentClass() {
+        return studentClass;
+    }
+
+    public void setStudentClass(String studentClass) {
+        this.studentClass = studentClass;
     }
 }

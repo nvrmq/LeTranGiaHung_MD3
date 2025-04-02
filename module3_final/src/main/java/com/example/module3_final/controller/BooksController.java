@@ -2,6 +2,7 @@ package com.example.module3_final.controller;
 
 import com.example.module3_final.model.Book;
 import com.example.module3_final.model.Student;
+import com.example.module3_final.model.Ticket;
 import com.example.module3_final.model.TicketCard;
 import com.example.module3_final.service.BooksService;
 
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -36,8 +38,10 @@ public class BooksController extends HttpServlet {
         }
     }
 
-    private void showCurrent(HttpServletRequest req, HttpServletResponse resp) {
-
+    private void showCurrent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<Ticket> tickets = booksService.findAllTicket();
+        req.setAttribute("tickets", tickets);
+        req.getRequestDispatcher("current.jsp").forward(req, resp);
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -47,18 +51,28 @@ public class BooksController extends HttpServlet {
         }
         switch (action) {
             case "add":
-                addTicket(req,resp);
+                try {
+                    addTicket(req,resp);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
         }
     }
 
-    private void addTicket(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void addTicket(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, ParseException {
         int bookId = Integer.parseInt(req.getParameter("bookId"));
-        int studentId = Integer.parseInt(req.getParameter("studentSelect"));
-        String status = "lent";
-        String pattern = "dd-MM-yyyy";
-        String lentDate =new SimpleDateFormat(pattern).format(new Date());
-        String returnDate = req.getParameter("returnDate");
-        TicketCard ticketCard = new TicketCard(bookId, studentId, status, lentDate, returnDate);
+        int studentId = Integer.parseInt(req.getParameter("studentId"));
+        String returnDateStr = req.getParameter("returnDate");
+        String status ="lent";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        Date borrowDate = new Date();
+        Date returnDate = sdf.parse(returnDateStr);
+        if (returnDate.before(borrowDate)) {
+            req.setAttribute("error", "Invalid date");
+            showLendForm(req, resp);
+            return;
+        }
+        TicketCard ticketCard = new TicketCard(bookId, studentId, status, borrowDate, returnDate);
         booksService.addTicket(ticketCard);
         showBooks(req,resp);
     }
@@ -67,8 +81,7 @@ public class BooksController extends HttpServlet {
         int id = Integer.parseInt(req.getParameter("id"));
         Book book = booksService.findById(id);
         List<Student> students = booksService.findAllStudent();
-        String pattern = "dd-MM-yyyy";
-        String localTime =new SimpleDateFormat(pattern).format(new Date());
+        String localTime =LocalDate.now().toString();
         req.setAttribute("book", book);
         req.setAttribute("students", students);
         req.setAttribute("localTime", localTime);
