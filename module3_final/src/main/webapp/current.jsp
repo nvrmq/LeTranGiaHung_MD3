@@ -204,12 +204,14 @@
 
     <div class="search-container">
         <div class="search-group">
-            <label for="studentSearch">Search by Student Name</label>
-            <input type="text" id="studentSearch" class="search-input" placeholder="Enter student name...">
-        </div>
-        <div class="search-group">
-            <label for="bookSearch">Search by Book Name</label>
-            <input type="text" id="bookSearch" class="search-input" placeholder="Enter book name...">
+            <form action="/book" method="get">
+                <input name="action" value="search" type="hidden">
+                <label for="studentSearch">Search by Student Name</label>
+                <input type="text" id="studentSearch" name="searchName" value="${searchName}" class="search-input" placeholder="Enter student name...">
+                <label for="bookSearch">Search by Book Name</label>
+                <input type="text" id="bookSearch" name="bookName" value="${bookName}" class="search-input" placeholder="Enter book name...">
+                <button type="submit">Search</button>
+            </form>
         </div>
     </div>
 
@@ -238,7 +240,7 @@
                         <td><c:out value="${item.getStudentClass()}"/></td>
                         <td><c:out value="${item.getLentDate()}"/></td>
                         <td><c:out value="${item.getReturnDate()}"/></td>
-                        <td><a href="/book?action=lend&id=${item.getTicketId()}">Return/a></td>
+                        <td><a href="/book?action=return&id=${item.getTicketId()}">Return</td>
                     </tr>
                 </a>
             </c:forEach>

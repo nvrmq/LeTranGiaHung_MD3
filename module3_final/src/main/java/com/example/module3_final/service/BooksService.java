@@ -34,4 +34,14 @@ public class BooksService implements IBookService{
     public List<Ticket> findAllTicket() {
         return booksRepository.findAllTickets();
     }
+
+    @Override
+    public List<Ticket> searchTicket(String searchName, String bookName) {
+        return booksRepository.searchTicket(searchName, bookName);
+    }
+
+    @Override
+    public void returnBook(String ticketId) {
+        booksRepository.returnBook(ticketId);
+    }
 }

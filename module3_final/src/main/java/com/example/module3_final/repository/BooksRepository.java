@@ -145,4 +145,55 @@ public class BooksRepository implements IBooksRepository {
         }
         return tickets;
     }
+
+    @Override
+    public List<Ticket> searchTicket(String searchName, String bookName) {
+        String sql = "call searchTicket(?,?)";
+        String sql2 = "call searchTicketByName(?)";
+        String sql3 = "call searchTicketByBook(?)";
+        List<Ticket> tickets = new ArrayList<>();
+        Connection connection = BaseRepository.getConnectDB();
+        try {
+            PreparedStatement statement = null;
+            if (bookName.equals("")){
+                statement = connection.prepareStatement(sql2);
+                statement.setString(1, "%" + searchName + "%");
+            } else if (searchName.equals("")) {
+                statement = connection.prepareStatement(sql3);
+                statement.setString(1, "%" + bookName + "%");
+            } else {
+                statement = connection.prepareStatement(sql);
+                statement.setString(1, "%" + bookName + "%");
+                statement.setString(2, "%" + searchName + "%");
+            }
+            statement.execute();
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()){
+                int id = resultSet.getInt("ticket_id");
+                String name = resultSet.getString("book_name");
+                String author = resultSet.getString("book_author");
+                String studentName = resultSet.getString("student_name");
+                String studentClass= resultSet.getString("student_class");
+                String status = resultSet.getString("status");
+                String lentDate = resultSet.getString("lent_date");
+                String returnedDate = resultSet.getString("returned_date");
+                Ticket ticket = new Ticket(id, name, author, studentName, studentClass, status, lentDate, returnedDate);
+                tickets.add(ticket);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return tickets;
+    }
+    public void returnBook(String ticketId) {
+        String sql = "UPDATE tickets SET status ='returned', returned_date = CURDATE() WHERE id = ?";
+        Connection connection = BaseRepository.getConnectDB();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, ticketId);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

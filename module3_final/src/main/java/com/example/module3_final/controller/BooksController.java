@@ -33,9 +33,37 @@ public class BooksController extends HttpServlet {
                 break;
             case "current":
                 showCurrent(req,resp);
+                break;
+            case "search":
+                searchName(req,resp);
+                break;
+            case "return":
+                returnBooks(req,resp);
             default:
                 showBooks(req, resp);
         }
+    }
+
+    private void returnBooks(HttpServletRequest req, HttpServletResponse resp) {
+        String id = req.getParameter("id");
+        try {
+            booksService.returnBook(id);
+            List<Ticket> tickets = booksService.findAllTicket();
+            req.setAttribute("tickets", tickets);
+            req.getRequestDispatcher("current.jsp").forward(req,resp);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void searchName(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String searchName = req.getParameter("searchName");
+        String bookName = req.getParameter("bookName");
+        List<Ticket> tickets = booksService.searchTicket(searchName, bookName);
+        req.setAttribute("tickets", tickets);
+        req.getRequestDispatcher("current.jsp").forward(req,resp);
     }
 
     private void showCurrent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -91,6 +119,6 @@ public class BooksController extends HttpServlet {
     private void showBooks(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Book> books = booksService.findAll();
         req.setAttribute("books", books);
-        req.getRequestDispatcher("home.jsp").forward(req,resp);
+        req.getRequestDispatcher("home.jsp").forward(req, resp);
     }
 }

@@ -13,4 +13,6 @@ public interface IBooksRepository {
     List<Student> finAllStudents();
     void addTicket(TicketCard ticket);
     List<Ticket> findAllTickets();
+    List<Ticket> searchTicket(String searchName, String bookName);
+    void returnBook(String ticketId);
 }

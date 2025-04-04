@@ -202,17 +202,6 @@
 <div class="container">
     <h1 style="margin-bottom: 2rem;">Library Books</h1>
 
-    <div class="search-container">
-        <div class="search-group">
-            <label for="bookSearch">Search by Book Name</label>
-            <input type="text" id="bookSearch" class="search-input" placeholder="Enter book name...">
-        </div>
-        <div class="search-group">
-            <label for="authorSearch">Search by Author</label>
-            <input type="text" id="authorSearch" class="search-input" placeholder="Enter author name...">
-        </div>
-    </div>
-
     <div class="table-container">
         <table class="table" id="booksTable">
             <thead>
