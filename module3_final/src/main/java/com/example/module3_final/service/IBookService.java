@@ -14,5 +14,5 @@ public interface IBookService {
     void addTicket(TicketCard ticket);
     List<Ticket> findAllTicket();
     List<Ticket> searchTicket(String searchName, String bookName);
-    void returnBook(String ticketId);
+    void returnBook(String ticketId, String bookId);
 }

@@ -194,8 +194,7 @@
 <body>
 <nav class="nav">
     <ul class="nav-links">
-        <li><a href="index.html">Books</a></li>
-        <li><a href="history.html">Lending History</a></li>
+        <li><a href="/book">Books</a></li>
     </ul>
 </nav>
 
@@ -230,17 +229,17 @@
             </tr>
             </thead>
             <tbody id="historyTableBody">
-            <c:forEach var="item" items="${tickets}">
+            <c:forEach var="current" items="${tickets}">
                 <a>
                     <tr>
-                        <td><c:out value="${item.getTicketId()}"/></td>
-                        <td><c:out value="${item.getBookName()}"/></td>
-                        <td><c:out value="${item.getAuthor()}"/></td>
-                        <td><c:out value="${item.getStudentName()}"/></td>
-                        <td><c:out value="${item.getStudentClass()}"/></td>
-                        <td><c:out value="${item.getLentDate()}"/></td>
-                        <td><c:out value="${item.getReturnDate()}"/></td>
-                        <td><a href="/book?action=return&id=${item.getTicketId()}">Return</td>
+                        <td><c:out value="${current.getTicketId()}"/></td>
+                        <td><c:out value="${current.getBookName()}"/></td>
+                        <td><c:out value="${current.getAuthor()}"/></td>
+                        <td><c:out value="${current.getStudentName()}"/></td>
+                        <td><c:out value="${current.getStudentClass()}"/></td>
+                        <td><c:out value="${current.getLentDate()}"/></td>
+                        <td><c:out value="${current.getReturnDate()}"/></td>
+                        <td><a href="/book?action=return&id=${current.getTicketId()}&id2=${current.getBookName()}">Return</td>
                     </tr>
                 </a>
             </c:forEach>

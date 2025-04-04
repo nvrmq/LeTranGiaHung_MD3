@@ -46,8 +46,9 @@ public class BooksController extends HttpServlet {
 
     private void returnBooks(HttpServletRequest req, HttpServletResponse resp) {
         String id = req.getParameter("id");
+        String bookName = req.getParameter("id2");
         try {
-            booksService.returnBook(id);
+            booksService.returnBook(id, bookName);
             List<Ticket> tickets = booksService.findAllTicket();
             req.setAttribute("tickets", tickets);
             req.getRequestDispatcher("current.jsp").forward(req,resp);
@@ -89,7 +90,7 @@ public class BooksController extends HttpServlet {
 
     private void addTicket(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, ParseException {
         int bookId = Integer.parseInt(req.getParameter("bookId"));
-        int studentId = Integer.parseInt(req.getParameter("studentId"));
+        int studentId = Integer.parseInt(req.getParameter("studentSelect"));
         String returnDateStr = req.getParameter("returnDate");
         String status ="lent";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");

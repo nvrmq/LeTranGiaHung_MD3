@@ -88,16 +88,20 @@ public class BooksRepository implements IBooksRepository {
     }
     @Override
     public void addTicket(TicketCard borrowCard) {
-        String sql = "INSERT INTO tickets (book_id, student_id, status, lent_date, returned_date) VALUES(?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO tickets (book_id, student_id, status, lent_date) VALUES(?, ?, ?, CURDATE());";
+        String sql2 = "UPDATE books SET book_quantity = book_quantity - 1 where id = ?";
         Connection connection = BaseRepository.getConnectDB();
         try {
+            PreparedStatement statement = connection.prepareStatement(sql2);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, borrowCard.getBookId());
             preparedStatement.setInt(2, borrowCard.getStudentId());
             preparedStatement.setString(3, borrowCard.getStatus());
-            preparedStatement.setDate(4, (java.sql.Date) new Date(borrowCard.getLentDate().getTime()));
-            preparedStatement.setDate(5, (java.sql.Date) new Date(borrowCard.getReturnDate().getTime()));
             int effectRows = preparedStatement.executeUpdate();
+            if (effectRows == 1){
+                statement.setInt(1, borrowCard.getBookId());
+                statement.executeUpdate();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -121,7 +125,7 @@ public class BooksRepository implements IBooksRepository {
                 "JOIN\n" +
                 "    students ON tickets.student_id = students.id\n" +
                 "WHERE\n" +
-                "    tickets.status = 'lent';";
+                "    tickets.status = 'lent'";
         List<Ticket> tickets = new ArrayList<>();
         Connection connection = BaseRepository.getConnectDB();
         try {
@@ -161,7 +165,10 @@ public class BooksRepository implements IBooksRepository {
             } else if (searchName.equals("")) {
                 statement = connection.prepareStatement(sql3);
                 statement.setString(1, "%" + bookName + "%");
-            } else {
+            } else if (bookName.equals("")&&searchName.equals("")) {
+                tickets = findAllTickets();
+                return tickets;
+            } else{
                 statement = connection.prepareStatement(sql);
                 statement.setString(1, "%" + bookName + "%");
                 statement.setString(2, "%" + searchName + "%");
@@ -185,12 +192,15 @@ public class BooksRepository implements IBooksRepository {
         }
         return tickets;
     }
-    public void returnBook(String ticketId) {
+    public void returnBook(String ticketId, String bookId) {
         String sql = "UPDATE tickets SET status ='returned', returned_date = CURDATE() WHERE id = ?";
+        String sql2 = "UPDATE books SET book_quantity = book_quantity + 1 where book_name = ?";
         Connection connection = BaseRepository.getConnectDB();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement2 = connection.prepareStatement(sql2);
             preparedStatement.setString(1, ticketId);
+            preparedStatement2.setString(1, bookId);
             preparedStatement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);

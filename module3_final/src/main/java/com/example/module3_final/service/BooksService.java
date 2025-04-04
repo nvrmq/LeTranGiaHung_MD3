@@ -41,7 +41,7 @@ public class BooksService implements IBookService{
     }
 
     @Override
-    public void returnBook(String ticketId) {
-        booksRepository.returnBook(ticketId);
+    public void returnBook(String ticketId, String bookId) {
+        booksRepository.returnBook(ticketId, bookId);
     }
 }
